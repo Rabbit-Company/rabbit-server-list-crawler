@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/Rabbit-Company/rabbit-server-list-crawler#readme",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "minecraft-server-util": "^5.4.0"
   }
 }

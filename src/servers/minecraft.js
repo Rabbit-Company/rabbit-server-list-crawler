@@ -3,7 +3,7 @@ import { setTimeout } from 'timers/promises';
 
 export default class Minecraft{
 	static servers = {};
-	static updatedServer = [];
+	static updatedServers = new Set([]);
 
 	static async getServers(){
 		for(let i = 1; i <= 50; i++){
@@ -49,7 +49,7 @@ export default class Minecraft{
 			this.servers[id].online = false;
 			this.servers[id].updated = new Date().toISOString();
 		}).finally(() => {
-			this.updatedServer.push(id);
+			this.updatedServers.add(Number(id));
 		});
 	}
 
@@ -71,8 +71,30 @@ export default class Minecraft{
 		}
 	}
 
-	static async uploadData(){
-		if(this.updatedServer.length === 0) return;
+	static async uploadData(SECRET_TOKEN){
+		if(this.updatedServers.size === 0) return;
+
+		let data = [];
+		this.updatedServers.forEach(id => {
+			let temp = this.servers[id];
+			temp['id'] = id;
+			data.push(temp);
+		});
+
+		let headers = new Headers();
+		headers.set('Authorization', 'Basic ' + Buffer.from('crawler:' + SECRET_TOKEN, 'base64'));
+		headers.set('Content-Type', 'application/json');
+
+		let response = await fetch('https://api.rabbitserverlist.com/v1/servers/minecraft/crawler', {
+			method: 'POST',
+			headers: headers,
+			data: JSON.stringify(data)
+		});
+
+		if(!response.ok) return;
+		if(response.status !== 200) return;
+
+		this.updatedServers.clear();
 	}
 
 }
