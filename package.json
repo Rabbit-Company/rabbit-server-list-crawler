@@ -1,0 +1,29 @@
+{
+  "name": "rabbit-server-list-crawler",
+  "version": "1.0.0",
+  "description": "The server crawler for Rabbit Server List",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rabbit-Company/rabbit-server-list-crawler.git"
+  },
+  "keywords": [
+    "rabbit",
+    "server",
+    "list",
+    "crawler"
+  ],
+  "author": "Rabbit Company",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/Rabbit-Company/rabbit-server-list-crawler/issues"
+  },
+  "homepage": "https://github.com/Rabbit-Company/rabbit-server-list-crawler#readme",
+  "dependencies": {
+    "minecraft-server-util": "^5.4.0"
+  }
+}
