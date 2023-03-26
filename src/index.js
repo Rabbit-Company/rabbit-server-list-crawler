@@ -4,5 +4,5 @@ await Minecraft.getServers();
 await Minecraft.runCrawler();
 
 setInterval(async function(){
-  await Minecraft.getServers();
+	await Minecraft.getServers();
 }, 1_800_000);
