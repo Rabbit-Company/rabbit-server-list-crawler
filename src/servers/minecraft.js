@@ -47,6 +47,7 @@ export default class Minecraft{
 			this.servers[id].updated = new Date().toISOString();
 		}).catch(() => {
 			this.servers[id].online = false;
+			this.servers[id].players = 0;
 			this.servers[id].updated = new Date().toISOString();
 		}).finally(() => {
 			this.updatedServers.add(Number(id));
