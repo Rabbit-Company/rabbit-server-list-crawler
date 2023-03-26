@@ -83,17 +83,20 @@ export default class Minecraft{
 		});
 
 		let headers = new Headers();
-		headers.set('Authorization', 'Basic ' + Buffer.from('crawler:' + SECRET_TOKEN, 'base64'));
+		headers.set('Authorization', 'Basic ' + Buffer.from('crawler:' + SECRET_TOKEN).toString('base64'));
 		headers.set('Content-Type', 'application/json');
 
 		let response = await fetch('https://api.rabbitserverlist.com/v1/servers/minecraft/crawler', {
 			method: 'POST',
 			headers: headers,
-			data: JSON.stringify(data)
+			body: JSON.stringify({ 'servers': data })
 		});
 
 		if(!response.ok) return;
 		if(response.status !== 200) return;
+
+		let json = await response.json();
+		console.log(json);
 
 		this.updatedServers.clear();
 	}
