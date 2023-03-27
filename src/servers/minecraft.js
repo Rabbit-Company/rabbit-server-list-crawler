@@ -89,17 +89,31 @@ export default class Minecraft{
 		headers.set('Authorization', 'Basic ' + Buffer.from('crawler:' + SECRET_TOKEN).toString('base64'));
 		headers.set('Content-Type', 'application/json');
 
-		let response = await fetch('https://api.rabbitserverlist.com/v1/servers/minecraft/crawler', {
-			method: 'POST',
-			headers: headers,
-			body: JSON.stringify({ 'servers': data })
-		});
+		let limit = 20;
+		let pages = Math.ceil(data.length / limit);
 
-		if(!response.ok) return;
-		if(response.status !== 200) return;
+		for(let i = 0; i < pages; i++){
+			let offset = limit * i;
 
-		let json = await response.json();
-		console.log(json);
+			let limitedData = [];
+			for(let j = offset; j < (offset+limit); j++){
+				if(j >= data.length) break;
+				limitedData.push(data[j]);
+			}
+
+			let response = await fetch('https://api.rabbitserverlist.com/v1/servers/minecraft/crawler', {
+				method: 'POST',
+				headers: headers,
+				body: JSON.stringify({ 'servers': limitedData })
+			});
+
+			if(!response.ok) return;
+			if(response.status !== 200) return;
+
+			let json = await response.json();
+			console.log(json);
+
+		}
 
 		this.updatedServers.clear();
 	}
