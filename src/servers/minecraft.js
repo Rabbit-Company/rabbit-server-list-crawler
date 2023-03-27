@@ -73,11 +73,14 @@ export default class Minecraft{
 	}
 
 	static async uploadData(SECRET_TOKEN){
-		if(this.updatedServers.size === 0) return;
+		let copyUpdatedServer = new Set(JSON.parse(JSON.stringify([...this.updatedServers])));
+		let copyServers = JSON.parse(JSON.stringify(this.servers));
+
+		if(copyUpdatedServer.size === 0) return;
 
 		let data = [];
-		this.updatedServers.forEach(id => {
-			let temp = this.servers[id];
+		copyUpdatedServer.forEach(id => {
+			let temp = copyServers[id];
 			temp['id'] = id;
 			data.push(temp);
 		});
