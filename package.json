@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "The server crawler for Rabbit Server List",
   "main": "src/index.js",
+	"bin": {
+		"rsl-crawler": "src/index.js"
+	},
   "type": "module",
   "scripts": {
     "start": "node src/index.js"
@@ -24,6 +27,8 @@
   },
   "homepage": "https://github.com/Rabbit-Company/rabbit-server-list-crawler#readme",
   "dependencies": {
+    "@rabbit-company/logger": "^2.0.1",
+    "commander": "^10.0.0",
     "dotenv": "^16.0.3",
     "minecraft-server-util": "^5.4.0"
   }

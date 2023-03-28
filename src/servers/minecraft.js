@@ -1,3 +1,4 @@
+import Logger from '@rabbit-company/logger';
 import { status } from 'minecraft-server-util';
 import { setTimeout } from 'timers/promises';
 
@@ -7,7 +8,7 @@ export default class Minecraft{
 
 	static async getServers(){
 		for(let i = 1; i <= 50; i++){
-			console.log(`Fetching Minecraft Server (page ${i})`);
+			Logger.info(`Fetching Minecraft Server (page ${i})`);
 			try{
 				let res = await fetch("https://api.rabbitserverlist.com/v1/servers/minecraft/page/" + i);
 
@@ -30,13 +31,16 @@ export default class Minecraft{
 						updated: server.updated
 					};
 				});
-			}catch{}
+			}catch{
+				Logger.warn(`Failed to fetch Minecraft Server page ${i}`);
+			}
 
 			await setTimeout(1000);
 		}
 	}
 
 	static async crawl(id){
+		Logger.silly(`Crawling Minecraft Server #${id}`);
 		status(this.servers[id].ip, this.servers[id].port, {
 			timeout: 5000,
 			enableSRV: true
@@ -93,6 +97,7 @@ export default class Minecraft{
 		let pages = Math.ceil(data.length / limit);
 
 		for(let i = 0; i < pages; i++){
+			Logger.debug(`Batching page ${pages} of Minecraft Servers`);
 			let offset = limit * i;
 
 			let limitedData = [];
@@ -107,11 +112,21 @@ export default class Minecraft{
 				body: JSON.stringify({ 'servers': limitedData })
 			});
 
-			if(!response.ok) return;
-			if(response.status !== 200) return;
+			if(!response.ok || response.status !== 200){
+				Logger.warn('Something went wrong while trying to upload data.');
+				return;
+			}
 
 			let json = await response.json();
-			console.log(json);
+			if(json.error !== 0){
+				Logger.warn('Failed to submit data to the API. Error: ' + json.info);
+				return;
+			}
+
+			Logger.info(`${json.data.updated} Minecraft servers successfully updated.`);
+			if(json.data.total !== json.data.updated){
+				Logger.warn(`Only ${json.data.updated} Minecraft servers has been updated successfully out of ${json.data.total}.`);
+			}
 
 		}
 
