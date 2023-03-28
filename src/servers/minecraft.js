@@ -80,7 +80,7 @@ export default class Minecraft{
 		return await sendVote(ip, port, {
 			token: token,
 			username: username,
-			serviceName: 'rabbit-server-list',
+			serviceName: 'rabbitserverlist',
 			timestamp: Date.now(),
 			timeout: 5000
 		});
