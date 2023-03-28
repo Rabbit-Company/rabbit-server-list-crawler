@@ -1,5 +1,5 @@
 import Logger from '@rabbit-company/logger';
-import { status } from 'minecraft-server-util';
+import { status, sendVote } from 'minecraft-server-util';
 import { setTimeout } from 'timers/promises';
 
 export default class Minecraft{
@@ -74,6 +74,16 @@ export default class Minecraft{
 				await setTimeout(5000);
 			}catch{}
 		}
+	}
+
+	static async sendServerVote(ip, port, token, username){
+		return await sendVote(ip, port, {
+			token: token,
+			username: username,
+			serviceName: 'rabbit-server-list',
+			timestamp: Date.now(),
+			timeout: 5000
+		});
 	}
 
 	static async uploadData(SECRET_TOKEN){
