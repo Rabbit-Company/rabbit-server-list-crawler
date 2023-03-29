@@ -3,16 +3,15 @@
   "version": "1.0.0",
   "description": "The server crawler for Rabbit Server List",
   "main": "src/index.js",
+	"type": "module",
+	"license": "GPL-3.0",
+	"author": "Rabbit Company",
+	"homepage": "https://github.com/Rabbit-Company/rabbit-server-list-crawler#readme",
   "bin": {
     "rsl-crawler": "src/index.js"
   },
-  "type": "module",
   "scripts": {
     "start": "node src/index.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Rabbit-Company/rabbit-server-list-crawler.git"
   },
   "keywords": [
     "rabbit",
@@ -20,12 +19,17 @@
     "list",
     "crawler"
   ],
-  "author": "Rabbit Company",
-  "license": "GPL-3.0",
-  "bugs": {
-    "url": "https://github.com/Rabbit-Company/rabbit-server-list-crawler/issues"
+	"repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rabbit-Company/rabbit-server-list-crawler.git"
   },
-  "homepage": "https://github.com/Rabbit-Company/rabbit-server-list-crawler#readme",
+	"contributors": [
+		"Rabbit Company <info@rabbit-company.com> (https://github.com/Rabbit-Company)"
+	],
+  "bugs": {
+    "url": "https://github.com/Rabbit-Company/rabbit-server-list-crawler/issues",
+		"email": "info@rabbit-company.com"
+  },
   "dependencies": {
     "@hono/node-server": "^0.3.0",
     "@rabbit-company/logger": "^2.0.1",
