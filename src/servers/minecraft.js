@@ -63,15 +63,18 @@ export default class Minecraft{
 			try{
 				let keys = Object.keys(this.servers);
 				let id;
+				let lastUpdated = new Date().getTime();
 				for(let i = 0; i < keys.length; i++){
-					let lastUpdated = new Date().getTime();
 					let updated = new Date(this.servers[keys[i]].updated).getTime();
 
-					if(lastUpdated > updated) id = keys[i];
+					if(lastUpdated > updated){
+						lastUpdated = updated;
+						id = keys[i];
+					}
 				}
 
 				await this.crawl(id);
-				await setTimeout(5000);
+				await setTimeout(2000);
 			}catch{}
 		}
 	}
