@@ -74,7 +74,7 @@ export default class Minecraft{
 				}
 
 				await this.crawl(id);
-				await setTimeout(2000);
+				await setTimeout(1000);
 			}catch{}
 		}
 	}
