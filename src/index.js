@@ -25,10 +25,13 @@ const program = new Command();
 program
 	.name('rsl-crawler')
 	.description('Simple crawler for Rabbit Server List')
-	.version('1.0.0')
+	.version('1.1.0')
 	.option('-t, --token <string>', 'cloudflare token')
 	.option('-p, --port <number>', '', 9090)
-	.option('-l, --logger <number>', 'logger level', 2);
+	.option('-l, --logger <number>', 'logger level', 2)
+	.option('-f, --fetcher <number>', 'fetch new servers (minutes)', 10)
+	.option('-u, --upload <number>', 'upload server data (minutes)', 1)
+	.option('-d, --delay <number>', 'delay for crawler (milliseconds)', 1000);
 
 program.parse();
 
@@ -36,29 +39,35 @@ const options = program.opts();
 let token = (typeof(options.token) !== 'undefined') ? options.token : process.env.CRAWLER_SECRET_TOKEN;
 const port = (options.port <= 65535 && options.logger >= 1) ? options.port : 9090;
 const loggerLever = (options.logger <= 6 && options.logger >= 0) ? options.logger : 2;
+const fetcher = (options.fetcher <= 60 && options.fetcher >= 1) ? options.fetcher : 10;
+const upload = (options.upload <= 60 && options.upload >= 1) ? options.upload : 1;
+const delay = (options.delay <= 60_000 && options.delay >= 0) ? options.delay : 1000;
 
 Logger.level = loggerLever;
 
 Logger.info("-----------------------------------");
 Logger.info("Listening on port: " + port);
 Logger.info("Logger level: " + loggerLever);
+Logger.info("Fetch servers every " + fetcher + " minute(s).");
+Logger.info("Upload server data every " + upload + " minute(s).");
+Logger.info("Crawl next server after " + delay + " millisecond(s).");
 Logger.info("-----------------------------------");
 
 setInterval(async function(){
 	Logger.info('Fetching data');
 	await Minecraft.getServers();
-}, 1_800_000);
+}, 1000 * 60 * fetcher);
 
 setInterval(async function(){
 	Logger.info('Uploading data');
 	await Minecraft.uploadData(token);
-}, 60_000);
+}, 1000 * 60 * upload);
 
 setTimeout(async function(){
 	Logger.info('Starting fetcher');
 	await Minecraft.getServers();
 	Logger.info('Starting crawler');
-	await Minecraft.runCrawler();
+	await Minecraft.runCrawler(delay);
 }, 100);
 
 app.post('/v1/servers/minecraft/vote', async request => {

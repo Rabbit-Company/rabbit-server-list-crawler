@@ -41,7 +41,7 @@ export default class Minecraft{
 
 	static async crawl(id){
 		Logger.silly(`Crawling Minecraft Server #${id}`);
-		status(this.servers[id].ip, this.servers[id].port, {
+		await status(this.servers[id].ip, this.servers[id].port, {
 			timeout: 5000,
 			enableSRV: true
 		}).then((result) => {
@@ -58,7 +58,7 @@ export default class Minecraft{
 		});
 	}
 
-	static async runCrawler(){
+	static async runCrawler(delay){
 		while(true){
 			try{
 				let keys = Object.keys(this.servers);
@@ -74,7 +74,7 @@ export default class Minecraft{
 				}
 
 				await this.crawl(id);
-				await setTimeout(1000);
+				if(delay !== 0) await setTimeout(delay);
 			}catch{}
 		}
 	}
