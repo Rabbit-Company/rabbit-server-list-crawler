@@ -96,4 +96,33 @@ app.post('/v1/servers/minecraft/vote', async request => {
 	});
 });
 
+app.post('/v2/servers/minecraft/vote', async request => {
+
+	let data = {};
+	try{
+		data = await request.req.json();
+	}catch{
+		return Utils.jsonResponse({ 'error': 1000, 'info': 'Not all required data provided in json format.' });
+	}
+
+	if(
+		typeof(data['authToken']) !== 'string' ||
+		typeof(data['votes']) !== 'object'
+	) return Utils.jsonResponse({ 'error': 1000, 'info': 'Not all required data provided in json format.' });
+
+	if(token !== data['authToken']) return Utils.jsonResponse({ 'error': 9999, 'info': 'Your do not have permission to perform this action.' })
+
+	let success = [];
+	let error = [];
+	for(let i = 0; i < data['votes'].length; i++){
+		await Minecraft.sendServerVote(data['votes'][i].ip, data['votes'][i].port, data['votes'][i].token, data['votes'][i].username).then(() => {
+			success.push(data['votes'][i].id);
+		}).catch(() => {
+			error.push(data['votes'][i].id);
+		});
+	}
+
+	return Utils.jsonResponse({ 'error': 0, 'info': 'success', 'success': success, 'error': error });
+});
+
 serve({ fetch: app.fetch, port: port });
