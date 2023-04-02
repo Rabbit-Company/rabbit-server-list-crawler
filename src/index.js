@@ -122,7 +122,7 @@ app.post('/v2/servers/minecraft/vote', async request => {
 		});
 	}
 
-	return Utils.jsonResponse({ 'error': 0, 'info': 'success', 'success': success, 'error': error });
+	return Utils.jsonResponse({ 'error': 0, 'info': 'success', 'delivered': success, 'failed': error });
 });
 
 serve({ fetch: app.fetch, port: port });
