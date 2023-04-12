@@ -7,7 +7,9 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import Utils from './utils.js';
-import Minecraft from "./servers/minecraft.js";
+
+import Minecraft from './servers/minecraft.js';
+import Discord from './servers/discord.js';
 
 const app = new Hono();
 app.use('*', cors({
@@ -25,7 +27,7 @@ const program = new Command();
 program
 	.name('rsl-crawler')
 	.description('Simple crawler for Rabbit Server List')
-	.version('1.2.1')
+	.version('2.0.0')
 	.option('-t, --token <string>', 'cloudflare token')
 	.option('-p, --port <number>', '', 9090)
 	.option('-l, --logger <number>', 'logger level', 2)
@@ -56,18 +58,22 @@ Logger.info("-----------------------------------");
 setInterval(async function(){
 	Logger.info('Fetching data');
 	await Minecraft.getServers();
+	await Discord.getServers();
 }, 1000 * 60 * fetcher);
 
 setInterval(async function(){
 	Logger.info('Uploading data');
 	await Minecraft.uploadData(token);
+	await Discord.uploadData(token);
 }, 1000 * 60 * upload);
 
 setTimeout(async function(){
-	Logger.info('Starting fetcher');
+	Logger.info('Starting fetchers');
 	await Minecraft.getServers();
-	Logger.info('Starting crawler');
-	await Minecraft.runCrawler(delay);
+	await Discord.getServers();
+	Logger.info('Starting crawlers');
+	Minecraft.runCrawler(delay);
+	Discord.runCrawler(delay);
 }, 100);
 
 app.post('/v1/servers/minecraft/vote', async request => {
