@@ -27,7 +27,7 @@ const program = new Command();
 program
 	.name('rsl-crawler')
 	.description('Simple crawler for Rabbit Server List')
-	.version('2.0.0')
+	.version('2.0.1')
 	.option('-t, --token <string>', 'cloudflare token')
 	.option('-p, --port <number>', '', 9090)
 	.option('-l, --logger <number>', 'logger level', 2)
