@@ -44,6 +44,7 @@ export default class Discord{
 	static async crawl(id){
 		Logger.silly(`Crawling Discord Server #${id}`);
 		await setTimeout(500);
+		this.servers[id].updated = new Date().toISOString();
 		let result = await fetch('https://discord.com/api/v10/invites/' + this.servers[id].invite_code + '?with_counts=true&with_expiration=true');
 		if(!result.ok || result.status !== 200) return;
 		let output = await result.json();
@@ -58,7 +59,6 @@ export default class Discord{
 		this.servers[id].members = output.approximate_presence_count;
 		this.servers[id].members_total = output.approximate_member_count;
 
-		this.servers[id].updated = new Date().toISOString();
 		this.updatedServers.add(Number(id));
 	}
 
