@@ -27,8 +27,9 @@ const program = new Command();
 program
 	.name('rsl-crawler')
 	.description('Simple crawler for Rabbit Server List')
-	.version('2.0.1')
+	.version('2.2.0')
 	.option('-t, --token <string>', 'cloudflare token')
+	.option('-b, --bot <string>', 'discord bot token')
 	.option('-p, --port <number>', '', 9090)
 	.option('-l, --logger <number>', 'logger level', 2)
 	.option('-f, --fetcher <number>', 'fetch new servers (minutes)', 10)
@@ -39,6 +40,7 @@ program.parse();
 
 const options = program.opts();
 let token = (typeof(options.token) !== 'undefined') ? options.token : process.env.CRAWLER_SECRET_TOKEN;
+let discordBotToken = (typeof(options.bot) !== 'undefined') ? options.bot : process.env.DISCORD_BOT_TOKEN;
 const port = (options.port <= 65535 && options.logger >= 1) ? options.port : 9090;
 const loggerLever = (options.logger <= 6 && options.logger >= 0) ? options.logger : 2;
 const fetcher = (options.fetcher <= 60 && options.fetcher >= 1) ? options.fetcher : 10;
@@ -73,7 +75,7 @@ setTimeout(async function(){
 	await Discord.getServers();
 	Logger.info('Starting crawlers');
 	Minecraft.runCrawler(delay);
-	Discord.runCrawler(delay);
+	Discord.runCrawler(delay, discordBotToken);
 }, 100);
 
 app.post('/v1/servers/minecraft/vote', async request => {

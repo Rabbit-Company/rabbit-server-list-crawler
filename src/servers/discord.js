@@ -41,12 +41,31 @@ export default class Discord{
 		}
 	}
 
-	static async crawl(id){
+	static async crawl(id, discordBotToken){
 		Logger.silly(`Crawling Discord Server #${id}`);
-		await setTimeout(500);
+		await setTimeout(5000);
 		this.servers[id].updated = new Date().toISOString();
-		let result = await fetch('https://discord.com/api/v10/invites/' + this.servers[id].invite_code + '?with_counts=true&with_expiration=true');
-		if(!result.ok || result.status !== 200) return;
+
+		let headers = new Headers();
+		headers.set('Authorization', 'Bot ' + discordBotToken);
+		headers.set('Content-Type', 'application/json');
+
+		let result = await fetch('https://discord.com/api/v10/invites/' + this.servers[id].invite_code + '?with_counts=true&with_expiration=true', {
+			method: 'GET',
+			headers: headers
+		});
+		if(result.status === 429){
+			Logger.error(`You have been rate limited by Discord API.`);
+			return;
+		}
+		if(result.status === 404){
+			Logger.warn(`Invalid Invite Code for Discord Server ID: ${id}`);
+			return;
+		}
+		if(result.status !== 200){
+			Logger.warn(`Error code ${result.status} while trying to fetch data from Discord API.`);
+			return;
+		}
 		let output = await result.json();
 
 		if(typeof(output.guild?.name) !== 'string' || typeof(output.approximate_member_count) !== 'number') return;
@@ -62,7 +81,7 @@ export default class Discord{
 		this.updatedServers.add(Number(id));
 	}
 
-	static async runCrawler(delay){
+	static async runCrawler(delay, discordBotToken){
 		while(true){
 			try{
 				let keys = Object.keys(this.servers);
@@ -77,7 +96,7 @@ export default class Discord{
 					}
 				}
 
-				await this.crawl(id);
+				await this.crawl(id, discordBotToken);
 				if(delay !== 0) await setTimeout(delay);
 			}catch{}
 		}
